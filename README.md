@@ -1,2 +1,2 @@
 # Arch-linux-install
-Trying to automate Arch linux install with bash and ansible
+Trying to semi-automate Arch linux install with bash and ansible
