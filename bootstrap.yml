@@ -1,0 +1,52 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Debian)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution in ["Debian", "Ubuntu"]
+
+  - name: install updates (Archlinux)
+    pacman:
+      update_cache: yes
+      upgrade: yes
+    when: ansible_distribution == "Archlinux"
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create yalson user
+# Yalson is a slightly furry humanoid woman working aboard the
+# Clear Air Turbulence. She forms an intimate relationship with
+# Horza during the time he is aboard the ship.
+    tags: always
+    user:
+      name: yalson
+      group: root
+
+  - name: add ssh key for yalson
+    tags: always
+    authorized_key:
+      user: yalson
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID2H8ArXCPyC5jeDcFAY08PQ5yJ+vUY5S+5u534IX0Lz ansible"
+
+  - name: add sudoers file for yalson
+    tags: always
+    copy:
+      src: sudoer_yalson
+      dest: /etc/sudoers.d/yalson
+      owner: root
+      group: root
+      mode: 0440
